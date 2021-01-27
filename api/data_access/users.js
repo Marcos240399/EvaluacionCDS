@@ -7,8 +7,7 @@ exports.userExists = function(userData){
             throw new Error('User exists error.');
         } else {
             var jsondata = JSON.stringify(datos);
-            console.log(datos.toString());
-            if (jsondata.includes(userData)) {
+            if (jsondata.includes(userData.email)) {
                 throw new Error('User already exists.');
             }
             else {
