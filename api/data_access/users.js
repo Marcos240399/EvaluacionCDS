@@ -1,29 +1,29 @@
 const { exception } = require('console');
+const { json } = require('express');
 var fs = require('fs');
 
-exports.userExists = function(userData){
-    fs.readFile('./users.txt', 'UTF-8', function (err, datos) {
-        if (err) {
-            throw new Error('User exists error.');
-        } else {
-            var jsondata = JSON.stringify(datos);
-            if (jsondata.includes(userData.email)) {
-                throw new Error('User already exists.');
+exports.addUser = async (userData) => {
+    let myPromise = new Promise(function (myResolve, myReject) {
+        fs.readFile('./users.txt', 'UTF-8', function (err, data) {
+            if (!err) {
+                var jsondata = JSON.stringify(data);
+                myResolve(jsondata);
             }
             else {
-                return Promise.resolve(datos);
+                myReject(Error(err));
             }
-        }
+        });
     });
+    return myPromise.then(
+        (result) => {
+            if (result.includes(userData.email)) {
+                return Promise.reject(Error("User already exists."));
+            } else {
+                fs.appendFileSync('./users.txt', JSON.stringify(userData));
+                return Promise.resolve(userData)
+            }
+        },
+        (error) => { return error }
+    )
 
-
-}
-exports.addUser = (userData) => {
-    try {
-        this.userExists(userData);
-        fs.writeFileSync('./users.txt', JSON.stringify(userData));
-        return Promise.resolve(userData);
-    } catch (error) {
-        return Promise.reject(error);
-    }
 };
