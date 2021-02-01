@@ -7,6 +7,10 @@ exports.theMovieDbApiSearch = async function (keyword) {
         return request.get(url, function (err, response, body) {
             if (!err) {
                 var locals = JSON.parse(response.body);
+                locals.results.forEach(movie => {
+                    movie.suggestionScore = Math.floor(Math.random() * 100);
+                });
+                locals.results.sort(function (a, b){return a.suggestionScore - b.suggestionScore});
                 myResolve(locals);
             }
             else {
