@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization.split(' ')[1];
         const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
         const email = decodedToken.email;
-        if (req.body.email && req.body.email !== email) {
+        if (req.body.loggedEmail && req.body.loggedEmail !== email) {
             throw new Error('User not logged in.');
         } else {
             next();

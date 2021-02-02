@@ -1,0 +1,3 @@
+{"name":"My little pony","id":1,"releaseDate":"2002-12-12","addedAt":"2021-02-02T20:55:22.539Z"}
+{"name":"My little pony 2","id":2,"releaseDate":"2012-12-12","addedAt":"2021-1-2"}
+{"name":"My little pony 3","id":3,"releaseDate":"2015-12-12","addedAt":"2021-2-2"}

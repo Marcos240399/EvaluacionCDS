@@ -11,6 +11,14 @@ exports.searchMovies = (req, res) => {
         (value) => {
             return res.status(200).send({ movies: value })
         },
-        (err) => { return res.status(400).send({ error: err }) }
+        (err) => { return res.status(400).send({ error: err.message }) }
+    );
+}
+exports.addFavMovie = (req,res) => {
+    movieDataAccess.addFavMovie(req.body.movie).then(
+        (value) => {
+            return res.status(200).send({ movieAdded: value})
+        },
+        (err) => {return res.status(400).send({error: err.message})}
     );
 }

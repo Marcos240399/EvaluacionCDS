@@ -1,5 +1,5 @@
-var request = require('request');
-const { response } = require('../app');
+const request = require('request');
+const fs = require('fs');
 
 exports.theMovieDbApiSearch = async function (keyword) {
     myPromise = new Promise(function (myResolve, myReject) {
@@ -10,7 +10,7 @@ exports.theMovieDbApiSearch = async function (keyword) {
                 locals.results.forEach(movie => {
                     movie.suggestionScore = Math.floor(Math.random() * 100);
                 });
-                locals.results.sort(function (a, b){return a.suggestionScore - b.suggestionScore});
+                locals.results.sort(function (a, b) { return a.suggestionScore - b.suggestionScore });
                 myResolve(locals);
             }
             else {
@@ -23,5 +23,33 @@ exports.theMovieDbApiSearch = async function (keyword) {
         (value) => { return Promise.resolve(value) },
         (error) => { return Promise.reject(error) }
     )
+}
 
+exports.addFavMovie = async function (movie) {
+    let readFavs = new Promise(function (myResolve, myReject) {
+        fs.readFile('./favoritos.txt', 'UTF-8', function (err, data) {
+            if (!err) {
+                myResolve(data);
+            }
+            else {
+                myReject(Error(err));
+            }
+        });
+    })
+    return readFavs.then(
+        (favs) => {
+            let movieIdString = '"id":'.concat(movie.id);
+            if (favs.includes(movieIdString)) {
+                return Promise.reject(Error("Movie is already in favorites list."));
+            } else {
+                const todayYear = new Date().getFullYear();
+                const todayMonth = new Date().getMonth();
+                const todayDay = new Date().getDate();
+                movie.addedAt = ''.concat(todayYear,"-",todayMonth+1,"-",todayDay);
+                fs.appendFileSync('./favoritos.txt', JSON.stringify(movie) + '\r\n');
+                return Promise.resolve(movie);
+            }
+        },
+        (err) => { return err }
+    )
 }
