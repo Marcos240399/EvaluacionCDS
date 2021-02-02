@@ -45,11 +45,36 @@ exports.addFavMovie = async function (movie) {
                 const todayYear = new Date().getFullYear();
                 const todayMonth = new Date().getMonth();
                 const todayDay = new Date().getDate();
-                movie.addedAt = ''.concat(todayYear,"-",todayMonth+1,"-",todayDay);
+                movie.addedAt = ''.concat(todayYear, "-", todayMonth + 1, "-", todayDay);
                 fs.appendFileSync('./favoritos.txt', JSON.stringify(movie) + '\r\n');
                 return Promise.resolve(movie);
             }
         },
         (err) => { return err }
+    )
+}
+exports.getFavs = async function () {
+    let myPromise = new Promise(function (myResolve, myReject) {
+        fs.readFile('./favoritos.txt', 'UTF-8', function (err, data) {
+            if (!err) {
+                var splitted = data.split("\r\n");
+                var parsed = new Array;
+                splitted.pop();
+                splitted.forEach(movie => {
+                    parsedMovie = JSON.parse(movie);
+                    parsedMovie.suggestionForTodayScore = Math.floor(Math.random() * 100);
+                    parsed.push(parsedMovie);
+                });
+                parsed.sort(function (a, b) { return a.suggestionForTodayScore - b.suggestionForTodayScore })
+                myResolve(parsed);
+            }
+            else {
+                myReject(Error(err));
+            }
+        })
+    })
+    return myPromise.then(
+        (favs) => {return Promise.resolve(favs)},
+        (err) => {return err}
     )
 }

@@ -14,11 +14,17 @@ exports.searchMovies = (req, res) => {
         (err) => { return res.status(400).send({ error: err.message }) }
     );
 }
-exports.addFavMovie = (req,res) => {
+exports.addFavMovie = (req, res) => {
     movieDataAccess.addFavMovie(req.body.movie).then(
         (value) => {
-            return res.status(200).send({ movieAdded: value})
+            return res.status(200).send({ movieAdded: value })
         },
-        (err) => {return res.status(400).send({error: err.message})}
+        (err) => { return res.status(400).send({ error: err.message }) }
     );
+}
+exports.getAllFavMovies = (req, res) => {
+    movieDataAccess.getFavs().then(
+        (value) => { res.status(200).send({ favoriteMovies: value }) },
+        (err) => { return res.status(404).send({ error: err.message }) }
+    )
 }
