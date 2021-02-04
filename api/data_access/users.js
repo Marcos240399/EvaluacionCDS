@@ -1,23 +1,23 @@
 const { exception } = require('console');
-const { json } = require('express');
-var fs = require('fs');
+const fs = require('fs');
+const bcrypt = require('bcrypt');
 
 exports.searchUser = async function (email, pass) {
     let myPromise = new Promise(function (myResolve, myReject) {
         fs.readFile('./users.txt', 'UTF-8', function (err, data) {
             if (!err) {
-                var dataarray = data.split("\r\n");
-                dataarray.pop();
+                var users = data.split("\r\n");
+                users.pop();
                 var foundMail = false;
                 var foundPass = false;
-                dataarray.forEach(element => {
+                users.forEach(user => {
                     if (!foundPass) {
-                        let jsonobj = JSON.parse(element);
-                        if (jsonobj.email == email) {
+                        let parsedUser = JSON.parse(user);
+                        if (parsedUser.email == email) {
                             foundMail = true;
-                            if (jsonobj.password == pass) {
+                            if (bcrypt.compare(pass, parsedUser.password)) {
                                 foundPass = true;
-                                myResolve(jsonobj);
+                                myResolve(parsedUser);
                             }
                         }
                     }
@@ -46,12 +46,12 @@ exports.addUser = async (userData) => {
         });
     });
     return readUsers.then(
-        (result) => {
-            let userMailString = '"email":'.concat('"',userData.email,'"');
-            
-            if (result.includes(userMailString)) {
+        async (users) => {
+            let userMailString = '"email":'.concat('"', userData.email, '"');
+            if (users.includes(userMailString)) {
                 return Promise.reject(Error("User already exists."));
             } else {
+                userData.password = await bcrypt.hash(userData.password, 10);
                 fs.appendFileSync('./users.txt', JSON.stringify(userData) + '\r\n');
                 return Promise.resolve(userData)
             }

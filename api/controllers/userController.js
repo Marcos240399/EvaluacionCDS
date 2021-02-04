@@ -5,16 +5,16 @@ var userDataAccess = require('../data_access/users')
 
 exports.create = (req, res) => {
     userDataAccess.addUser(req.body).then(
-        function (result) { return res.status(200).send({ email: result.email }) },
+        function (user) { return res.status(200).send({ email: user.email }) },
         function (err) { return res.status(400).send({ error: err.message }) }
     );
 }
 
 exports.login = (req, res) => {
     userDataAccess.searchUser(req.body.email, req.body.password).then(
-        (result) => {
-            const token = jwt.sign({email: result.email}, 'RANDOM_TOKEN_SECRET', { expiresIn: '24h' });
-            return res.status(200).json({ email: result.email, token: token })
+        (user) => {
+            const token = jwt.sign({email: user.email}, 'RANDOM_TOKEN_SECRET', { expiresIn: '24h' });
+            return res.status(200).json({ email: user.email, token: token })
         },
         (error) => {
             if (error.includes("password")) {
