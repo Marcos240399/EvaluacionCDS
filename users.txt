@@ -1,0 +1,1 @@
+{"email":"marcosbazzano@gmail.com","firstName":"Marcos","lastName":"Bazzano","password":"$2b$10$gIpqWxQ41tzDOyuvEvQs/eE2.zjrBtdjoQc8ZxKR23rV/KpCBjSi2"}
